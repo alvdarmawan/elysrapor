@@ -1,4 +1,4 @@
-# Nilai NA — grade calculator + site CSV filler
+# ElysRapor - Grade Calculator + Site CSV Filler
 
 Scripts:
 
@@ -11,7 +11,7 @@ Scripts:
 ## Requirements
 
 - Python 3.9+
-- [openpyxl](https://openpyxl.readthedocs.io/) — `pip3 install openpyxl`
+- [openpyxl](https://openpyxl.readthedocs.io/) - `pip install openpyxl`
 
 ## 1. Generate the NA report
 
@@ -30,8 +30,7 @@ python na_report.py input.xlsx output.xlsx
 - `Nilai 1`–`Nilai 8`: number 0–100, or a letter grade (`A`, `B`, `B+`, or
   combinations like `AA` = A + A). Numbers are averaged; letters become
   extra points (A = 3, B+ = 2, B = 1).
-- `Tugas dan Latihan` and `Ulangan Harian` are optional — leave blank if a
-  class doesn't use them.
+- `Tugas dan Latihan` and `Ulangan Harian` are optional, leave blank if unused.
 - Blank rows and blank PTS/PAS are handled but flagged in the warnings.
 
 **Output** (`output.xlsx`): one sheet per class in the school's official
@@ -51,7 +50,7 @@ PTS/PAS, students with no harian data at all).
 - Both `Rata-rata NH` and `NA` are rounded to whole numbers.
 
 All of the above (weights, letter→point mapping, min CP columns, header
-text) live at the top of `na_report.py` under `CONFIG` — edit there, not
+text) live at the top of `na_report.py` under `CONFIG` - edit there, not
 in the logic below it.
 
 ## 2. Fill the site's CSV templates
@@ -63,9 +62,8 @@ python fill_site_csv.py output.xlsx templates_dir/ result_dir/
 #Change "templates_dir/" and "result_dir/" to whatever the folder names are
 ```
 
-- `templates_dir/` — the site's `Template_Nilai_*.csv` files, one per
-  class, each with `NISN, Nama, Nilai` columns (NISN pre-filled, Nilai
-  blank).
+- `templates_dir/` - the folder containing `Template_Nilai_*.csv` files, one per
+  class, each with `NISN, Nama, Nilai` columns.
 - Matches each template to a class sheet in `output.xlsx` by name, then
   matches students by `Nama` (case/whitespace-insensitive).
 - Writes filled CSVs to `result_dir/` with the `Template_` prefix
@@ -73,15 +71,3 @@ python fill_site_csv.py output.xlsx templates_dir/ result_dir/
 - Any student on the site but not in the report (or vice versa) is left
   blank / skipped and logged in `result_dir/Peringatan_Pencocokan.txt`
   instead of guessed at.
-
-## Known limitations / things to revisit
-
-- CP column count in the output is based on how many `Nilai N` headers
-  exist in the input sheet (currently 8), not how many a class actually
-  fills in.
-- Name matching for the CSV filler is exact after normalizing
-  case/whitespace — nicknames or differently-spelled names won't match
-  automatically.
-- School name, subject, semester, and teacher name are left blank in the
-  output layout; fill in `CONFIG` at the top of `na_report.py` if you want
-  them hardcoded.
