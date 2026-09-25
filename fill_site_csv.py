@@ -36,6 +36,9 @@ import re
 from pathlib import Path
 from openpyxl import load_workbook
 
+NISN_COL = "NISN"
+NAMA_COL = "Nama_Siswa"
+NILAI_COL = "Nilai"
 
 def norm(name):
     return re.sub(r"\s+", " ", str(name).strip()).upper()
@@ -116,19 +119,19 @@ def fill_templates(report_path, templates_dir, output_dir):
             fieldnames = reader.fieldnames
             rows = list(reader)
 
-        if not fieldnames or "Nama" not in fieldnames or "Nilai" not in fieldnames:
-            mismatches.append(f"{tpl_path.name}: kolom 'Nama'/'Nilai' tidak ditemukan, dilewati")
+        if not fieldnames or NAMA_COL not in fieldnames or NILAI_COL not in fieldnames:
+            mismatches.append(f"{tpl_path.name}: kolom '{NAMA_COL}'/'{NILAI_COL}' tidak ditemukan, dilewati")
             continue
 
         for row in rows:
-            key = norm(row["Nama"])
+            key = norm(row[NAMA_COL])
             if key in report_students:
-                row["Nilai"] = report_students[key]
+                row[NILAI_COL] = report_students[key]
                 matched_names.add(key)
             else:
-                row["Nilai"] = ""
+                row[NILAI_COL] = ""
                 mismatches.append(
-                    f"{class_name} / {tpl_path.name}: '{row['Nama']}' ada di template situs tapi tidak ada di laporan (tidak hadir / beda kelas?)"
+                    f"{class_name} / {tpl_path.name}: '{row[NAMA_COL]}' ada di template situs tapi tidak ada di laporan (tidak hadir / beda kelas?)"
                 )
 
         # students in the report but not on the site template for this class
